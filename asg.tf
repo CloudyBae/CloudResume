@@ -2,8 +2,6 @@ resource "aws_autoscaling_group" "nginx_asg" {
   name     = "Nginx-asg"
   max_size = 3
   min_size = 1
-  #   health_check_grace_period = 300
-  #   health_check_type         = "ELB"
   desired_capacity     = 2
   force_delete         = true
   launch_configuration = aws_launch_configuration.webserver_launch_config.name
@@ -18,6 +16,11 @@ resource "aws_autoscaling_group" "nginx_asg" {
     create_before_destroy = true
     ignore_changes        = [load_balancers, target_group_arns]
   }
+}
+
+resource "aws_autoscaling_attachment" "nginx_auto_attach" {
+  autoscaling_group_name = aws_autoscaling_group.nginx_asg.id
+  alb_target_group_arn   = aws_lb_target_group.nginx-alb-target.arn
 }
 
 resource "aws_launch_configuration" "webserver_launch_config" {
