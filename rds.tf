@@ -5,8 +5,9 @@ resource "aws_db_instance" "wordpress_rds_instance" {
   engine                 = "mysql"
   engine_version         = "5.7"
   instance_class         = "db.t2.micro"
-  username               = "wordpress_user"
-  password               = "wordpress_password"
+  name                   = var.db_name
+  username               = var.db_user
+  password               = jsondecode(data.aws_secretsmanager_secret_version.wp_secret.secret_string)["password"]
   parameter_group_name   = "default.mysql5.7"
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
   availability_zone      = "us-east-1a"
