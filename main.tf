@@ -16,14 +16,6 @@ resource "aws_internet_gateway" "igw" {
   }
 }
 
-resource "aws_route_table" "private_rt" {
-  vpc_id = aws_vpc.vpc.id
-
-  tags = {
-    Name = "cloudresume_private_rt"
-  }
-}
-
 resource "aws_route_table" "public_rt" {
   vpc_id = aws_vpc.vpc.id
 
@@ -32,7 +24,7 @@ resource "aws_route_table" "public_rt" {
   }
 }
 
-resource "aws_route" "default_route" {
+resource "aws_route" "public_internet_gateway" {
   route_table_id         = aws_route_table.public_rt.id
   destination_cidr_block = "0.0.0.0/0"
   gateway_id             = aws_internet_gateway.igw.id
@@ -46,26 +38,6 @@ resource "aws_route_table_association" "public_a_assoc" {
 resource "aws_route_table_association" "public_b_assoc" {
   subnet_id      = aws_subnet.public_subnet_b.id
   route_table_id = aws_route_table.public_rt.id
-}
-
-resource "aws_subnet" "private_subnet_a" {
-  vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.97.232.0/22"
-  availability_zone = "us-east-1a"
-
-  tags = {
-    Name = "cloudresume-private-a"
-  }
-}
-
-resource "aws_subnet" "private_subnet_b" {
-  vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.97.236.0/22"
-  availability_zone = "us-east-1b"
-
-  tags = {
-    Name = "cloudresume-private-b"
-  }
 }
 
 resource "aws_subnet" "public_subnet_a" {
@@ -90,6 +62,67 @@ resource "aws_subnet" "public_subnet_b" {
   }
 }
 
+resource "aws_eip" "nat_eip" {
+  vpc = true
+  depends_on = [aws_internet_gateway.igw]
+}
+
+resource "aws_nat_gateway" "nat" {
+  allocation_id = aws_eip.nat_eip.id
+  subnet_id = aws_subnet.public_subnet_a.id
+  depends_on = [aws_internet_gateway.igw]
+  
+  tags = {
+    Name = "nat-gateway"
+  }
+}
+
+resource "aws_subnet" "private_subnet_a" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "10.97.232.0/22"
+  availability_zone = "us-east-1a"
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "cloudresume-private-a"
+  }
+}
+
+resource "aws_subnet" "private_subnet_b" {
+  vpc_id            = aws_vpc.vpc.id
+  cidr_block        = "10.97.236.0/22"
+  availability_zone = "us-east-1b"
+  map_public_ip_on_launch = false
+
+  tags = {
+    Name = "cloudresume-private-b"
+  }
+}
+
+resource "aws_route_table" "private_rt" {
+  vpc_id = aws_vpc.vpc.id
+
+  tags = {
+    Name = "cloudresume_private_rt"
+  }
+}
+
+resource "aws_route" "private_nat_gateway" {
+  route_table_id = aws_route_table.private_rt.id
+  destination_cidr_block = "0.0.0.0/0"
+  nat_gateway_id = aws_nat_gateway.nat.id
+}
+
+resource "aws_route_table_association" "private_a_assoc" {
+  subnet_id      = aws_subnet.private_subnet_a.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
+resource "aws_route_table_association" "private_b_assoc" {
+  subnet_id      = aws_subnet.private_subnet_b.id
+  route_table_id = aws_route_table.private_rt.id
+}
+
 resource "aws_security_group" "nginx_sg" {
   name        = "nginx_sg"
   description = "nginx security group"
@@ -97,8 +130,8 @@ resource "aws_security_group" "nginx_sg" {
 
   ingress {
     description = "ALB SG connection"
-    from_port   = 22
-    to_port     = 22
+    from_port   = 0
+    to_port     = 65535
     protocol    = "tcp"
     security_groups = [aws_security_group.alb_sg.id]
   }
@@ -117,9 +150,9 @@ resource "aws_security_group" "alb_sg" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
