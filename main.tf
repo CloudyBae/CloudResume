@@ -41,9 +41,9 @@ resource "aws_route_table_association" "public_b_assoc" {
 }
 
 resource "aws_subnet" "public_subnet_a" {
-  vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.97.224.0/22"
-  availability_zone = "us-east-1a"
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "10.97.224.0/22"
+  availability_zone       = "us-east-1a"
   map_public_ip_on_launch = true
 
   tags = {
@@ -52,9 +52,9 @@ resource "aws_subnet" "public_subnet_a" {
 }
 
 resource "aws_subnet" "public_subnet_b" {
-  vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.97.228.0/22"
-  availability_zone = "us-east-1b"
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "10.97.228.0/22"
+  availability_zone       = "us-east-1b"
   map_public_ip_on_launch = true
 
   tags = {
@@ -63,24 +63,24 @@ resource "aws_subnet" "public_subnet_b" {
 }
 
 resource "aws_eip" "nat_eip" {
-  vpc = true
+  vpc        = true
   depends_on = [aws_internet_gateway.igw]
 }
 
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id = aws_subnet.public_subnet_a.id
-  depends_on = [aws_internet_gateway.igw]
-  
+  subnet_id     = aws_subnet.public_subnet_a.id
+  depends_on    = [aws_internet_gateway.igw]
+
   tags = {
     Name = "nat-gateway"
   }
-}                                       
+}
 
 resource "aws_subnet" "private_subnet_a" {
-  vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.97.232.0/22"
-  availability_zone = "us-east-1a"
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "10.97.232.0/22"
+  availability_zone       = "us-east-1a"
   map_public_ip_on_launch = false
 
   tags = {
@@ -89,9 +89,9 @@ resource "aws_subnet" "private_subnet_a" {
 }
 
 resource "aws_subnet" "private_subnet_b" {
-  vpc_id            = aws_vpc.vpc.id
-  cidr_block        = "10.97.236.0/22"
-  availability_zone = "us-east-1b"
+  vpc_id                  = aws_vpc.vpc.id
+  cidr_block              = "10.97.236.0/22"
+  availability_zone       = "us-east-1b"
   map_public_ip_on_launch = false
 
   tags = {
@@ -108,9 +108,9 @@ resource "aws_route_table" "private_rt" {
 }
 
 resource "aws_route" "private_nat_gateway" {
-  route_table_id = aws_route_table.private_rt.id
+  route_table_id         = aws_route_table.private_rt.id
   destination_cidr_block = "0.0.0.0/0"
-  nat_gateway_id = aws_nat_gateway.nat.id
+  nat_gateway_id         = aws_nat_gateway.nat.id
 }
 
 resource "aws_route_table_association" "private_a_assoc" {
@@ -129,10 +129,10 @@ resource "aws_security_group" "nginx_sg" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
-    description = "ALB SG connection"
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    description     = "ALB SG connection"
+    from_port       = 80
+    to_port         = 80
+    protocol        = "tcp"
     security_groups = [aws_security_group.alb_sg.id]
   }
 
@@ -170,9 +170,9 @@ resource "aws_security_group" "rds_sg" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
-    from_port   = 3306
-    to_port     = 3306
-    protocol    = "tcp"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
     security_groups = [aws_security_group.nginx_sg.id]
   }
 
