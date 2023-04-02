@@ -7,7 +7,7 @@ resource "aws_autoscaling_group" "nginx_asg" {
   desired_capacity     = 2
   force_delete         = true
   launch_configuration = aws_launch_configuration.webserver_launch_config.name
-  vpc_zone_identifier  = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
+  vpc_zone_identifier  = [aws_subnet.public_subnet_a.id, aws_subnet.public_subnet_b.id]
 
   tag {
     key                 = "Name"
