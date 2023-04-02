@@ -75,7 +75,7 @@ resource "aws_nat_gateway" "nat" {
   tags = {
     Name = "nat-gateway"
   }
-}
+}                                       
 
 resource "aws_subnet" "private_subnet_a" {
   vpc_id            = aws_vpc.vpc.id
@@ -131,8 +131,8 @@ resource "aws_security_group" "nginx_sg" {
   ingress {
     description = "ALB SG connection"
     from_port   = 0
-    to_port     = 65535
-    protocol    = "tcp"
+    to_port     = 0
+    protocol    = "-1"
     security_groups = [aws_security_group.alb_sg.id]
   }
 
@@ -150,9 +150,9 @@ resource "aws_security_group" "alb_sg" {
   vpc_id      = aws_vpc.vpc.id
 
   ingress {
-    from_port   = 80
-    to_port     = 80
-    protocol    = "tcp"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
