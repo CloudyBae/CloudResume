@@ -7,7 +7,7 @@ resource "aws_autoscaling_group" "nginx_asg" {
   desired_capacity     = 2
   force_delete         = true
   launch_configuration = aws_launch_configuration.webserver_launch_config.name
-  vpc_zone_identifier  = [aws_subnet.private_subnet_a.id]
+  vpc_zone_identifier  = [aws_subnet.private_subnet_a.id, aws_subnet.private_subnet_b.id]
 
   tag {
     key                 = "Name"
@@ -24,6 +24,7 @@ resource "aws_launch_configuration" "webserver_launch_config" {
   name          = "web_config"
   image_id      = data.aws_ami.ubuntu.id
   instance_type = "t2.micro"
+  security_groups = [aws_security_group.nginx_sg.id]
   user_data     = file("userdata.tpl")
 }
 
