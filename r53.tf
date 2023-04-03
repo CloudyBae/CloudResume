@@ -31,8 +31,10 @@ resource "aws_route53_record" "websiteurl" {
   type    = "A"
 
   alias {
-    name                   = aws_cloudfront_distribution.cf.domain_name
-    zone_id                = aws_cloudfront_distribution.cf.hosted_zone_id
+    name                   = replace(aws_cloudfront_distribution.cf.domain_name, "/[.]$/", "")
+    zone_id                = "${aws_cloudfront_distribution.cf.hosted_zone_id}"
     evaluate_target_health = true
   }
+  
+  depends_on = [aws_cloudfront_distribution.cf]
 }

@@ -27,7 +27,6 @@ resource "aws_launch_configuration" "webserver_launch_config" {
   name                 = "web_config"
   image_id             = data.aws_ami.ubuntu.id
   instance_type        = "t2.micro"
-  iam_instance_profile = aws_iam_instance_profile.wordpress.id
   security_groups      = [aws_security_group.web_sg.id]
   user_data            = data.template_file.asg_init.rendered
   lifecycle {

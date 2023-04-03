@@ -1,17 +1,81 @@
-#!/bin/bash -xe
-whoami
-apt-get -y update
-apt-get -y install unattended-upgrades
-apt-get -y install nfs-common 
-mkdir /efs
-sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 ${efs_id}.efs.us-east-1.amazonaws.com:/ /efs
-curl 'https://bootstrap.pypa.io/get-pip.py' -o 'get-pip.py'
-python get-pip.py
-pip install awscli
-apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-echo 'deb https://apt.dockerproject.org/repo ubuntu-trusty main' > /etc/apt/sources.list.d/docker.list
-apt-get -y update
-apt-get -y install docker-engine
-apt-get -y install fail2ban
-pip install docker-compose
-docker run -d -e WORDPRESS_DB_HOST=${db_host} -e WORDPRESS_DB_PASSWORD=${db_pass} -e WORDPRESS_DB_USER=${db_user} -e WORDPRESS_DB_NAME=${db_name} -v /efs/wordpress:/var/www/html -p 80:80 wordpress:latest
+#!/bin/bash -e
+exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
+sudo apt-get update
+sudo apt-get install nginx -y
+sudo service nginx start
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:ondrej/php
+sudo apt update
+sudo apt install php7.4-fpm php7.4-common php7.4-mysql php7.4-gmp php7.4-curl php7.4-intl php7.4-mbstring php7.4-xmlrpc php7.4-gd php7.4-xml php7.4-cli php7.4-zip -y
+
+#create uploads folder and set permissions
+#EFS
+git clone https://github.com/aws/efs-utils
+sudo apt-get -y install binutils
+cd efs-utils/
+./build-deb.sh
+sudo apt-get -y install ./build/amazon-efs-utils*deb
+sudo mkdir /var/www/html/wp-content
+sudo mount -t efs -o tls ${efs_id}:/ /var/www/html/wp-content
+cd /var/www/html
+
+#download wordpress
+curl -O https://wordpress.org/latest.tar.gz
+#unzip wordpress
+tar -zxvf latest.tar.gz
+#change dir to wordpress
+cd wordpress
+#copy file to parent dir
+cp -rf . ..
+#move back to parent dir
+cd ..
+chown -R www-data:www-data /var/www/html/
+#remove files from wordpress folder
+rm index.nginx-debian.html
+rm -R wordpress
+#create wp config
+cp wp-config-sample.php wp-config.php
+
+# set database details with perl find and replace
+perl -pi -e "s/database_name_here/${db_name}/g" wp-config.php
+perl -pi -e "s/username_here/${db_user}/g" wp-config.php
+perl -pi -e "s/password_here/${db_pass}/g" wp-config.php
+perl -pi -e "s/localhost/${db_host}/g" wp-config.php
+
+#set WP salts
+perl -i -pe'
+  BEGIN {
+    @chars = ("a" .. "z", "A" .. "Z", 0 .. 9);
+    push @chars, split //, "!@#$%^&*()-_ []{}<>~\`+=,.;:/?|";
+    sub salt { join "", map $chars[ rand @chars ], 1 .. 64 }
+  }
+  s/put your unique phrase here/salt()/ge
+' wp-config.php
+
+echo "Cleaning..."
+#remove zip file
+rm latest.tar.gz
+#remove bash script
+mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
+cat > /etc/nginx/sites-available/default <<EOT
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+        root /var/www/html;
+        index index.php index.html index.htm index.nginx-debian.html;
+        server_name _;
+        location / {
+                try_files \$uri \$uri/ /index.php?\$args;
+        }
+        location ~ \.php$ {
+         include snippets/fastcgi-php.conf;
+         fastcgi_pass unix:/var/run/php/php7.4-fpm.sock;
+         include fastcgi_params;
+        }
+}
+
+EOT
+sudo service nginx restart
+echo "========================="
+echo "Installation is complete."
+echo "========================="
