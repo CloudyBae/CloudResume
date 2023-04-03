@@ -9,22 +9,22 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"]
 }
 
-data "aws_secretsmanager_secret" "wordpress_secret" {
-  name = "wordpress_secret"
-}
+# data "aws_secretsmanager_secret" "wordpress_secret" {
+#   name = "wordpress_secret"
+# }
 
-data "aws_secretsmanager_secret_version" "wp_secret" {
-  secret_id = data.aws_secretsmanager_secret.wordpress_secret.id
-}
+# data "aws_secretsmanager_secret_version" "wp_secret" {
+#   secret_id = data.aws_secretsmanager_secret.wordpress_secret.id
+# }
 
 data "template_file" "asg_init" {
-  template = file(userdata.tpl)
+  template = "${file("${path.module}/userdata.tpl")}"
   vars = {
     db_name = var.db_name
-    db_pass = jsondecode(data.aws_secretsmanager_secret_version.wp_secret.secret_string)["password"]
+    db_pass = var.db_pass
     db_user = var.db_user
     db_host = aws_db_instance.wordpress_rds_instance.address
-    efs_id  = aws_efs_file_system.wordpress_efs.id
+    efs_id  = "${aws_efs_file_system.wordpress_efs.id}"
   }
 }
 

@@ -1,11 +1,19 @@
 resource "aws_s3_bucket" "website" {
   bucket        = "yjbae"
-  acl           = "private"
   force_destroy = true
 
   tags = {
     Name = "My bucket"
   }
+}
+
+resource "aws_s3_bucket_acl" "yjbaebucket_acl" {
+  bucket = aws_s3_bucket.website.id
+  acl    = "private"
+}
+
+locals {
+  s3_origin_id = "myS3Origin"
 }
 
 resource "aws_s3_bucket_public_access_block" "s3block" {
@@ -18,12 +26,11 @@ resource "aws_s3_bucket_public_access_block" "s3block" {
 
 resource "aws_cloudfront_distribution" "cf" {
   enabled             = true
-  aliases             = [var.endpoint]
   default_root_object = "index.html"
 
   origin {
     domain_name = aws_s3_bucket.website.bucket_regional_domain_name
-    origin_id   = aws_s3_bucket.website.bucket_regional_domain_name
+    origin_id   = local.s3_origin_id
 
     s3_origin_config {
       origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
@@ -32,16 +39,15 @@ resource "aws_cloudfront_distribution" "cf" {
 
   default_cache_behavior {
     allowed_methods        = ["GET", "HEAD", "OPTIONS", "PUT", "POST", "PATCH", "DELETE"]
-    cached_methods         = ["GET", "HEAD", "OPTIONS"]
-    target_origin_id       = aws_s3_bucket.website.bucket_regional_domain_name
+    cached_methods         = ["GET", "HEAD"]
+    target_origin_id       = local.s3_origin_id
     viewer_protocol_policy = "redirect-to-https"
 
     forwarded_values {
-      headers      = []
-      query_string = true
+      query_string = false
 
       cookies {
-        forward = "all"
+        forward = "none"
       }
     }
   }

@@ -1,5 +1,5 @@
-resource "aws_autoscaling_group" "nginx_asg" {
-  name                 = "Nginx-asg"
+resource "aws_autoscaling_group" "web_asg" {
+  name                 = "web-asg"
   max_size             = 3
   min_size             = 1
   desired_capacity     = 2
@@ -9,7 +9,7 @@ resource "aws_autoscaling_group" "nginx_asg" {
 
   tag {
     key                 = "Name"
-    value               = "Nginx-web-server-asg"
+    value               = "web-server-asg"
     propagate_at_launch = true
   }
   lifecycle {
@@ -18,9 +18,9 @@ resource "aws_autoscaling_group" "nginx_asg" {
   }
 }
 
-resource "aws_autoscaling_attachment" "nginx_auto_attach" {
-  autoscaling_group_name = aws_autoscaling_group.nginx_asg.id
-  alb_target_group_arn   = aws_lb_target_group.nginx-alb-target.arn
+resource "aws_autoscaling_attachment" "web_auto_attach" {
+  autoscaling_group_name = aws_autoscaling_group.web_asg.id
+  lb_target_group_arn   = aws_lb_target_group.web-alb-target.arn
 }
 
 resource "aws_launch_configuration" "webserver_launch_config" {
@@ -28,7 +28,7 @@ resource "aws_launch_configuration" "webserver_launch_config" {
   image_id             = data.aws_ami.ubuntu.id
   instance_type        = "t2.micro"
   iam_instance_profile = aws_iam_instance_profile.wordpress.id
-  security_groups      = [aws_security_group.nginx_sg.id]
+  security_groups      = [aws_security_group.web_sg.id]
   user_data            = data.template_file.asg_init.rendered
   lifecycle {
     create_before_destroy = true

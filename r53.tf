@@ -1,34 +1,6 @@
-resource "aws_route53_zone" "yjbae" {
-  name          = "yjbae.com"
-  force_destroy = true
-}
-
-resource "aws_route53_record" "yjbae_record" {
-  zone_id = aws_route53_zone.yjbae.zone_id
-  name    = "www.yjbae.com"
-  type    = "A"
-  ttl     = 300
-  records = [aws_lb.nginx-alb.dns_name]
-}
-
-resource "aws_route53_record" "alias_route53_record" {
-  zone_id = aws_route53_zone.yjbae.zone_id
-  name    = "yjbae.com"
-  type    = "A"
-
-  alias {
-    name                   = aws_lb.nginx-alb.dns_name
-    zone_id                = aws_lb.nginx-alb.zone_id
-    evaluate_target_health = true
-  }
-}
-
 resource "aws_acm_certificate" "cert" {
-  provider                  = aws.us-east-1
   domain_name               = var.domain_name
-  subject_alternative_names = ["*.${var.domain_name}"]
   validation_method         = "DNS"
-  tags                      = local.tags
 }
 
 resource "aws_route53_record" "certvalidation" {
@@ -49,7 +21,6 @@ resource "aws_route53_record" "certvalidation" {
 }
 
 resource "aws_acm_certificate_validation" "certvalidation" {
-  provider                = aws.us-east-1
   certificate_arn         = aws_acm_certificate.cert.arn
   validation_record_fqdns = [for r in aws_route53_record.certvalidation : r.fqdn]
 }

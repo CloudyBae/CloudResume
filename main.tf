@@ -123,8 +123,8 @@ resource "aws_route_table_association" "private_b_assoc" {
   route_table_id = aws_route_table.private_rt.id
 }
 
-resource "aws_security_group" "nginx_sg" {
-  name        = "nginx_sg"
+resource "aws_security_group" "web_sg" {
+  name        = "web_sg"
   description = "allow inbound traffic from ALB"
   vpc_id      = aws_vpc.vpc.id
 
@@ -187,14 +187,14 @@ resource "aws_security_group" "rds_sg" {
     from_port       = 3306
     to_port         = 3306
     protocol        = "tcp"
-    security_groups = [aws_security_group.nginx_sg.id]
+    security_groups = [aws_security_group.web_sg.id]
   }
 
   ingress {
     from_port       = 22
     to_port         = 22
     protocol        = "tcp"
-    security_groups = ["${aws_security_group.nginx_sg.id}"]
+    security_groups = ["${aws_security_group.web_sg.id}"]
   }
 
   egress {
