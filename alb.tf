@@ -12,13 +12,30 @@ resource "aws_lb" "web-alb" {
 }
 
 resource "aws_lb_target_group" "web-alb-target" {
-  name     = "web-alb-target"
-  port     = 80
-  protocol = "HTTP"
+  name        = "web-alb-target"
+  port        = 80
+  protocol    = "HTTP"
+  target_type = "instance"
+  vpc_id      = aws_vpc.vpc.id
   stickiness {
     type = "lb_cookie"
   }
-  vpc_id = aws_vpc.vpc.id
+}
+
+resource "aws_lb_listener" "web-alb-listener" {
+  load_balancer_arn = aws_lb.web-alb.arn
+  port              = "443"
+  protocol          = "HTTPS"
+
+  ssl_policy = "ELBSecurityPolicy-2016-08"
+
+  certificate_arn = aws_acm_certificate.cert.arn
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.web-alb-target.arn
+  }
+  depends_on = [aws_route53_record.certvalidation]
 }
 
 resource "aws_lb_listener" "web-alb-listener" {

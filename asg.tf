@@ -16,11 +16,12 @@ resource "aws_autoscaling_group" "web_asg" {
     create_before_destroy = true
     ignore_changes        = [load_balancers, target_group_arns]
   }
+
 }
 
 resource "aws_autoscaling_attachment" "web_auto_attach" {
   autoscaling_group_name = aws_autoscaling_group.web_asg.id
-  lb_target_group_arn   = aws_lb_target_group.web-alb-target.arn
+  lb_target_group_arn    = aws_lb_target_group.web-alb-target.arn
 }
 
 resource "aws_launch_configuration" "webserver_launch_config" {
@@ -29,6 +30,8 @@ resource "aws_launch_configuration" "webserver_launch_config" {
   instance_type        = "t2.micro"
   security_groups      = [aws_security_group.web_sg.id]
   user_data            = data.template_file.asg_init.rendered
+  iam_instance_profile = aws_iam_instance_profile.wordpress.id
+
   lifecycle {
     create_before_destroy = true
   }

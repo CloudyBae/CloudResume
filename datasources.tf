@@ -9,40 +9,16 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"]
 }
 
-# data "aws_secretsmanager_secret" "wordpress_secret" {
-#   name = "wordpress_secret"
-# }
-
-# data "aws_secretsmanager_secret_version" "wp_secret" {
-#   secret_id = data.aws_secretsmanager_secret.wordpress_secret.id
-# }
-
 data "template_file" "asg_init" {
-  template = "${file("${path.module}/userdata.tpl")}"
+  template = file("${path.module}/userdata.tpl")
   vars = {
     db_name = var.db_name
     db_pass = var.db_pass
     db_user = var.db_user
     db_host = aws_db_instance.wordpress_rds_instance.address
-    efs_id  = "${aws_efs_file_system.wordpress_efs.id}"
+    efs_id  = aws_efs_file_system.wordpress_efs.id
   }
 }
-
-# data "aws_iam_policy_document" "s3policy" {
-#   statement {
-#     actions = ["s3:GetObject"]
-
-#     resources = [
-#       aws_s3_bucket.website.arn,
-#       "${aws_s3_bucket.website.arn}/*"
-#     ]
-
-#     principals {
-#       type        = "AWS"
-#       identifiers = [aws_cloudfront_origin_access_identity.oai.iam_arn]
-#     }
-#   }
-# }
 
 data "aws_route53_zone" "domain" {
   name = var.domain_name
