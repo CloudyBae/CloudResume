@@ -33,7 +33,7 @@ I implemented a GitHub Actions pipeline to automatically test my API & lambda fu
 With the use of the WordPress plugin "WPCode Lite", I inserted a JavaScript code into the footer of my WordPress's HTML code.
 ![Screenshot_8](https://user-images.githubusercontent.com/109190196/232249757-f05a6875-b89e-40a2-a6b6-0fc6f29ea5ec.jpg)
 
-By using "console.log(data);" in my JavaScript code, I was able to use my web browsers developers tool to ensure that the JSON data was being received properly.
+By using "console.log(data);" in my JavaScript code, I was able to use my web browsers developers tool to ensure that the JSON data was being received properly.  
 ![Screenshot_23](https://user-images.githubusercontent.com/109190196/232249863-a2ff0540-45ce-4927-8c19-d8b97c8de27e.jpg)
 
 I checked my DynamoDB table to see if it was working as intended with the viewer count matching both in the table & the website.
