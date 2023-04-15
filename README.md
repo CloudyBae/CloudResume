@@ -40,6 +40,6 @@ I checked my DynamoDB table to see if it was working as intended with the viewer
 ![Screenshot_9](https://user-images.githubusercontent.com/109190196/232249931-7af63cbd-cd17-4b4b-81b7-9c0011be7676.jpg)
 
 I utilized Postman to test my REST API and website to ensure everything was working properly before completely opening my website to the public.
-![Screenshot_6](https://user-images.githubusercontent.com/109190196/232249889-77736745-7e46-4b3c-b9e0-804310ac332c.jpg)
+![Screenshot_14](https://user-images.githubusercontent.com/109190196/232250419-2922da72-ce74-4b5c-8de9-beb1db8b93df.jpg)
 
 # Now my website it up and running and open to the public: https://yjbae.com
