@@ -17,6 +17,7 @@ Once my barebones WordPress site was up and running, it was time to design! Befo
 ![Screenshot_11](https://user-images.githubusercontent.com/109190196/232249162-5b6704db-177f-4b40-ba3b-593e9304ab91.jpg)
 
 With the use of Elementor, I designed and updated my website. Anytime I updated my website, I generated a new static version of my site. My first website design was okay, but it didn't feel like "me", so I tore my site down and rebuilt it with more personality.
+
 1st version:
 ![Screenshot_12](https://user-images.githubusercontent.com/109190196/232249377-b2a77377-0d5c-480b-8858-5bb7c53147ab.jpg)
 2nd version:
