@@ -39,7 +39,7 @@ By using "console.log(data);" in my JavaScript code, I was able to use my web br
 I checked my DynamoDB table to see if it was working as intended with the viewer count matching both in the table & the website.
 ![Screenshot_9](https://user-images.githubusercontent.com/109190196/232249931-7af63cbd-cd17-4b4b-81b7-9c0011be7676.jpg)
 
-I utilized Postman to test my REST API and website to ensure everything was working properly before completely opening my website to the public.
+I utilized Postman to test my REST API and website to ensure everything was working properly before completely opening my website to the public.  
 ![Screenshot_14](https://user-images.githubusercontent.com/109190196/232250419-2922da72-ce74-4b5c-8de9-beb1db8b93df.jpg)
 
 # Now my website it up and running and open to the public: https://yjbae.com
