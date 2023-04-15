@@ -11,7 +11,7 @@ Within my Terraform code I bootstrapped my EC2 instances created by my Auto Scal
 With the use of AWS Certificate Manager, I created a new validated certificate. I also created new DNS records (A & CNAME) to make WordPress use my own custom domain. Then I implemented HTTPS protocol with my valid SSL certificate.  
 ![Screenshot_5](https://user-images.githubusercontent.com/109190196/230819125-5887927a-329d-46d3-af15-5317165e8927.jpg)
 
-# The section below source code is available here: github.com/yoojin93/CloudResume_Frontend
+# The section below source code is available here: https://github.com/yoojin93/CloudResume_Frontend
 Once my barebones WordPress site was up and running, it was time to design! Before I started to design, I created a Jenkins pipeline with a webhook that would push my github repo files into an S3 bucket whenever change was detected in my repo. With the use of the AWS CLI, the only files that were uploaded to the S3 buckets were any new or modified files. Any files that were the same and already stored in my S3 bucket did not get uploaded to save space and costs. I used the plugin "Simply Static" to generate a static version of my wordpress site which got automatically pushed to my github repo.
 ![Screenshot_22](https://user-images.githubusercontent.com/109190196/232249159-d70f1e81-9e27-4594-8ffb-9787d009a2f9.jpg)
 ![Screenshot_11](https://user-images.githubusercontent.com/109190196/232249162-5b6704db-177f-4b40-ba3b-593e9304ab91.jpg)
@@ -23,7 +23,7 @@ With the use of Elementor, I designed and updated my website. Anytime I updated 
 2nd version:
 ![Screenshot_13](https://user-images.githubusercontent.com/109190196/232249408-11d480a7-f9a8-48a5-8af0-f4cd2d3eca50.jpg)
 
-# The section below source code is available here: github.com/yoojin93/website-visitor-counter
+# The section below source code is available here: https://github.com/yoojin93/website-visitor-counter
 After my site was complete from a design perspective, I needed to do the last part of the challenge, implementing a website counter. I used DynamoDB, API Gateway, and Lambda for the backend of this website counter. With the use of Terraform, I provisioned the needed AWS resources by code. 
 ![Screenshot_1](https://user-images.githubusercontent.com/109190196/232249656-5ecbc7f8-d0df-4331-9ee8-874a37158292.jpg)
 
@@ -42,4 +42,4 @@ I checked my DynamoDB table to see if it was working as intended with the viewer
 I utilized Postman to test my REST API and website to ensure everything was working properly before completely opening my website to the public.
 ![Screenshot_6](https://user-images.githubusercontent.com/109190196/232249889-77736745-7e46-4b3c-b9e0-804310ac332c.jpg)
 
-# Now my website it up and running and open to the public: yjbae.com
+# Now my website it up and running and open to the public: https://yjbae.com
