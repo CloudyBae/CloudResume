@@ -42,4 +42,4 @@ I checked my DynamoDB table to see if it was working as intended with the viewer
 I utilized Postman to test my REST API and website to ensure everything was working properly before completely opening my website to the public.  
 ![Screenshot_14](https://user-images.githubusercontent.com/109190196/232250419-2922da72-ce74-4b5c-8de9-beb1db8b93df.jpg)
 
-# Now my website it up and running and open to the public: https://yjbae.com
+# My website is now up and running to the public: https://yjbae.com
