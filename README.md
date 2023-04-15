@@ -23,4 +23,23 @@ With the use of Elementor, I designed and updated my website. Anytime I updated 
 2nd version:
 ![Screenshot_13](https://user-images.githubusercontent.com/109190196/232249408-11d480a7-f9a8-48a5-8af0-f4cd2d3eca50.jpg)
 
+# The section below source code is available here: github.com/yoojin93/website-visitor-counter
+After my site was complete from a design perspective, I needed to do the last part of the challenge, implementing a website counter. I used DynamoDB, API Gateway, and Lambda for the backend of this website counter. With the use of Terraform, I provisioned the needed AWS resources by code. 
+![Screenshot_1](https://user-images.githubusercontent.com/109190196/232249656-5ecbc7f8-d0df-4331-9ee8-874a37158292.jpg)
 
+I implemented a GitHub Actions pipeline to automatically test my API & lambda function with the use of PyTest.
+![Screenshot_10](https://user-images.githubusercontent.com/109190196/232249720-1831b3cd-11f4-47c1-8548-2cf65241d313.jpg)
+
+With the use of the WordPress plugin "WPCode Lite", I inserted a JavaScript code into the footer of my WordPress's HTML code.
+![Screenshot_8](https://user-images.githubusercontent.com/109190196/232249757-f05a6875-b89e-40a2-a6b6-0fc6f29ea5ec.jpg)
+
+By using "console.log(data);" in my JavaScript code, I was able to use my web browsers developers tool to ensure that the JSON data was being received properly.
+![Screenshot_23](https://user-images.githubusercontent.com/109190196/232249863-a2ff0540-45ce-4927-8c19-d8b97c8de27e.jpg)
+
+I checked my DynamoDB table to see if it was working as intended with the viewer count matching both in the table & the website.
+![Screenshot_9](https://user-images.githubusercontent.com/109190196/232249931-7af63cbd-cd17-4b4b-81b7-9c0011be7676.jpg)
+
+I utilized Postman to test my REST API and website to ensure everything was working properly before completely opening my website to the public.
+![Screenshot_6](https://user-images.githubusercontent.com/109190196/232249889-77736745-7e46-4b3c-b9e0-804310ac332c.jpg)
+
+# Now my website it up and running and open to the public: yjbae.com
